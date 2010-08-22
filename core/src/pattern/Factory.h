@@ -33,9 +33,9 @@
 #ifndef RSSD_CORE_PATTERN_FACTORY_H
 #define RSSD_CORE_PATTERN_FACTORY_H
 
-#include "system/Type.h"
-#include "pattern/Manager.h"
-#include "pattern/Singleton.h"
+#include "../System.h"
+#include "Manager.h"
+#include "Singleton.h"
 
 namespace rssd {
 namespace pattern {
@@ -53,7 +53,7 @@ public:
 	virtual ~Factory();
 
 public:
-	virtual uint32_t getType() const { return this->_type; }
+  virtual uint32_t getType() const = 0; // { return this->_type; }
 
 public:
 	bool operator ==(const uint32_t &value) const;
@@ -73,9 +73,7 @@ protected:
 }; // class Factory
 
 template <typename PRODUCT>
-class FactoryManager :
-	public Singleton<FactoryManager<PRODUCT> >,
-	virtual public Manager<Factory<PRODUCT>*>
+class FactoryManager : virtual public Manager<Factory<PRODUCT>*>
 {
 public:
 	typedef typename std::map<uint32_t, Factory<PRODUCT>*> Factory_m;

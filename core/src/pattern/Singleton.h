@@ -44,7 +44,7 @@
 #ifndef RSSD_CORE_PATTERNS_SINGLETON_H
 #define RSSD_CORE_PATTERNS_SINGLETON_H
 
-#include <cassert>
+#include "../System.h"
 
 namespace rssd {
 namespace pattern {
@@ -79,7 +79,7 @@ class Singleton
 ///
 
 #define DECLARE_SINGLETON(TYPENAME) \
-template<> TYPENAME* TSDC::Pattern::Singleton<TYPENAME>::_instance = NULL;
+template<> TYPENAME* rssd::pattern::Singleton<TYPENAME>::_instance = NULL;
 
 } // namespace pattern
 } // namespace rssd

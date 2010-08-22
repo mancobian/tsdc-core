@@ -1,5 +1,5 @@
 ///
-/// @file pattern
+/// @file Pattern.h
 /// @author Mancobian Poemandres
 /// @license BSD License
 ///

@@ -33,9 +33,7 @@
 #ifndef RSSD_CORE_PATTERN_MANAGER_H
 #define RSSD_CORE_PATTERN_MANAGER_H
 
-#include <algorithm>
-#include <list>
-#include "system/Type.h"
+#include "../System.h"
 
 namespace rssd {
 namespace pattern {

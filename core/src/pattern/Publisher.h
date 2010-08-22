@@ -33,8 +33,8 @@
 #ifndef RSSD_CORE_PATTERN_PUBLISHER_H
 #define RSSD_CORE_PATTERN_PUBLISHER_H
 
-#include "system/Type.h"
-#include "pattern/Manager.h"
+#include "../System.h"
+#include "Manager.h"
 
 namespace rssd {
 namespace pattern {

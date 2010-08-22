@@ -1,5 +1,5 @@
 ///
-/// @file system
+/// @file System.h
 /// @author Mancobian Poemandres
 /// @license BSD License
 ///
@@ -28,12 +28,15 @@
 /// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 /// OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 /// USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-///#ifndef RSSD_CORE_SYSTEM
+///
+#ifndef RSSD_CORE_SYSTEM
 #define RSSD_CORE_SYSTEM
 
 #include "system/Preprocess.h"
 #include "system/Platform.h"
+#include "system/ThirdParty.h"
 #include "system/Type.h"
+#include "system/Strid.h"
 // #include "system/Error.h"
 
-#endif // RSSD_CORE_SYSTEM
+#endif // RSSD_CORE_SYSTEM

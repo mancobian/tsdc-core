@@ -33,6 +33,9 @@
 #ifndef RSSD_CORE_SYSTEM_STRID_H
 #define RSSD_CORE_SYSTEM_STRID_H
 
+#include "Type.h"
+#include "ThirdParty.h"
+
 namespace rssd {
 namespace system {
 
@@ -45,80 +48,80 @@ public:
 	typedef std::set<uint32_t> id_s;
 
 public:
-    strid::strid() :
+    strid() :
         _id(0),
         _text("__uninitialized__")
     {
     }
 
-    strid::strid(const char *text) :
+    strid(const char *text) :
         _id(0),
         _text(text)
     {
-        this->_id = strid::get_hash(this->_text);
+        this->_id = get_hash(this->_text);
     }
 
-    strid::strid(uint32_t id, const char *text) :
+    strid(uint32_t id, const char *text) :
         _id(id),
         _text(text)
     {
     }
 
-    strid::strid(const strid &rhs) :
+    strid(const strid &rhs) :
         _id(rhs._id),
         _text(rhs._text)
     {
     }
 
-    strid::~strid()
+    ~strid()
     {
     }
 
 public:
-    strid& strid::operator =(const char *value)
+    strid& operator =(const char *value)
     {
         this->_text.assign(value);
         this->_id = strid::get_hash(this->_text);
         return *this;
     }
 
-    bool strid::operator <(const char *value) const
+    bool operator <(const char *value) const
     {
         return (this->_id < strid::get_hash(value));
     }
 
-    bool strid::operator ==(const char *value) const
+    bool operator ==(const char *value) const
     {
         return (this->_id == strid::get_hash(value));
     }
 
-    bool strid::operator <(const uint32_t value) const
+    bool operator <(const uint32_t value) const
     {
         return (this->_id < value);
     }
 
-    bool strid::operator ==(const uint32_t value) const
+    bool operator ==(const uint32_t value) const
     {
         return (this->_id == value);
     }
 
-    strid& strid::operator =(const uint32_t value)
+    strid& operator =(const uint32_t value)
     {
         this->_id = value;
         return *this;
     }
 
-    bool strid::operator <(const strid &value) const
+    bool operator <(const strid &value) const
     {
         return (this->_id < value._id);
     }
 
-    bool strid::operator ==(const strid &value) const
+    bool operator ==(const strid &value) const
     {
         return (this->_id == value._id);
     }
 
-    strid& strid::operator =(const strid &value)
+    strid& operator =(const strid &value)
     {
         if (this != &value)
         {
@@ -129,25 +132,25 @@ public:
     }
 
 public:
-    uint32_t strid::get_hash(const std::string &text)
+    static uint32_t get_hash(const std::string &text)
     {
         // Concurrency lock
         static boost::mutex MUTEX;
         boost::mutex::scoped_lock lock(MUTEX);
 
         // Return ID if input string has already been hashed
-        if (strid::HASHMAP.find(text) != strid::HASHMAP.end())
-            return strid::HASHMAP[text];
+        if (strid::HASHMAP.find(text) != HASHMAP.end())
+            return HASHMAP[text];
 
         // Create string hash
         std::locale c_locale; // the "C" locale
         const std::collate<char>& collate_char = std::use_facet<std::collate<char> >(c_locale);
         uint32_t id = collate_char.hash(text.data(), text.data() + text.length());
-        assert (strid::HASHSET.find(id) == strid::HASHSET.end());
+        assert (strid::HASHSET.find(id) == HASHSET.end());
 
         // Store string hash
-        strid::HASHMAP.insert(std::make_pair(text, id));
-        strid::HASHSET.insert(id);
+        HASHMAP.insert(std::make_pair(text, id));
+        HASHSET.insert(id);
         return id;
     }
 
@@ -160,13 +163,13 @@ protected:
 	std::string _text;
 }; // class strid
 
+} // namespace system
+} // namespace rssd
+
 ///
 /// Macros
 ///
 
-#define STRID(VALUE) strid::get_hash(#VALUE);
-
-} // namespace system
-} // namespace rssd
+#define STRID(VALUE) rssd::system::strid::get_hash(#VALUE);
 
 #endif // RSSD_CORE_SYSTEM_STRID_H

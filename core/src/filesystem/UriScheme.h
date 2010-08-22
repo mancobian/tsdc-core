@@ -34,7 +34,7 @@
 #define RSSD_CORE_FILESYSTEM_URISCHEME_H
 
 #include <boost/assign.hpp>
-#include "system/Type.h"
+#include "../System.h"
 
 namespace boost {
 namespace filesystem {

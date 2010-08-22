@@ -33,6 +33,7 @@
 #ifndef RSSD_CORE_SYSTEM_TYPES_H
 #define RSSD_CORE_SYSTEM_TYPES_H
 
+#include <cassert>
 #include <vector>
 #include <list>
 #include <queue>
@@ -43,8 +44,11 @@
 #include <utility>
 #include <algorithm>
 #include <functional>
+#include <iterator>
 #include <locale>
-#include "system/ThirdParty.h"
+#include <iostream>
+#include <fstream>
+#include "ThirdParty.h"
 
 namespace rssd {
 
@@ -129,6 +133,20 @@ typedef std::queue<std::string> string_q;
 typedef std::deque<std::string> string_d;
 typedef std::set<std::string> string_s;
 typedef std::map<std::string, std::string> string_m;
+
+typedef boost::variant<
+  bool,
+  int8_t,
+  int16_t,
+  int32_t,
+  int64_t,
+  uint8_t,
+  uint16_t,
+  uint32_t,
+  uint64_t,
+  float32_t,
+  float64_t,
+  std::string> variant_t;
 
 ///
 /// Aliases

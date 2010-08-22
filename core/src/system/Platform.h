@@ -39,9 +39,10 @@ namespace system {
 struct Platform
 {
 	enum Type
-	{
+  {
+    UNKNOWN = 0,
 		POSIX = 1<<0,
-        LINUX = 1<<1,
+    LINUX = 1<<1,
 		WINDOWS = 1<<2,
 		OSX = 1<<3,
 		PLAYSTATION = 1<<4,

@@ -31,21 +31,111 @@
 ///
 
 #ifndef RSSD_FILESYSTEM_ERROR_H
-#define RSSD_FILESYSTEM_ERROR_Hnamespace rssd {namespace system {
+#define RSSD_FILESYSTEM_ERROR_H
+
+namespace rssd {
+namespace system {
 
 ///
 /// Includes
 ///
-#include <boost/system/error_code.hpp>#include <boost/system/system_error.hpp>
-#include "system/Type.h"///
-/// @brief The following extends the boost error_code system to support custom errors
-/// for the rssd::filesystem namespace./// @note See: System error support in C++0x - part 4: Creating your own error codes/// @url http://blog.think-async.com/2010/04/system-error-support-in-c0x-part-4.html///////// @note Step 1: define the error values/// struct filesystem_error{    enum value    {        success = 0,        minuend_does_not_contain_subtrahend,        count    }; // enum value}; // struct filesystem_error///
-/// @class filesystem_category_impl/// @note Step 2: define an error_category class
-///class filesystem_category_impl : public boost::system::error_category{public:    /// @note Step 3: give the category a human-readable name    inline virtual const char* name() const     {         return "rssd::filesystem";     }    /// @note Step 4: convert error codes to strings    inline virtual std::string message(int ev) const    {        switch (ev)        {            case filesystem_error::success:                return "Success";            case filesystem_error::minuend_does_not_contain_subtrahend:                return "The minuend path does not contain the subtrahend path";            case filesystem_error::count:            default:                 return "Unknown filesystem error";        }    }}; // class filesystem_category_impl////// @note Step 5: uniquely identify the category/// const boost::system::error_category& filesystem_category(){    static filesystem_category_impl INSTANCE;    return INSTANCE;}////// @note Step 6: construct an error_code from the enum/// boost::system::error_code make_error_code(filesystem_error::value e){    return boost::system::error_code(        static_cast<int>(e),        filesystem_category());}boost::system::error_condition make_error_condition(filesystem_error::value e){    return boost::system::error_condition(        static_cast<int>(e),        filesystem_category());}
-} // namespace system} // namespace rssd
 
-////// @note Step 7: register for implicit conversion to error_code/// 
+#include <boost/system/error_code.hpp>
+#include <boost/system/system_error.hpp>
+#include "Type.h"
+
+///
+/// @brief The following extends the boost error_code system to support custom errors
+/// for the rssd::filesystem namespace.
+/// @note See: System error support in C++0x - part 4: Creating your own error codes
+/// @url http://blog.think-async.com/2010/04/system-error-support-in-c0x-part-4.html
+///
+
+///
+/// @note Step 1: define the error values
+/// 
+
+struct filesystem_error
+{
+    enum value
+    {
+        success = 0,
+        minuend_does_not_contain_subtrahend,
+        count
+    }; // enum value
+}; // struct filesystem_error
+
+///
+/// @class filesystem_category_impl
+/// @note Step 2: define an error_category class
+///
+
+class filesystem_category_impl : public boost::system::error_category
+{
+public:
+    /// @note Step 3: give the category a human-readable name
+    inline virtual const char* name() const 
+    { 
+        return "rssd::filesystem"; 
+    }
+
+    /// @note Step 4: convert error codes to strings
+    inline virtual std::string message(int ev) const
+    {
+        switch (ev)
+        {
+            case filesystem_error::success:
+                return "Success";
+            case filesystem_error::minuend_does_not_contain_subtrahend:
+                return "The minuend path does not contain the subtrahend path";
+            case filesystem_error::count:
+            default: 
+                return "Unknown filesystem error";
+        }
+    }
+}; // class filesystem_category_impl
+
+///
+/// @note Step 5: uniquely identify the category
+/// 
+
+const boost::system::error_category& filesystem_category()
+{
+    static filesystem_category_impl INSTANCE;
+    return INSTANCE;
+}
+
+///
+/// @note Step 6: construct an error_code from the enum
+/// 
+
+boost::system::error_code make_error_code(filesystem_error::value e)
+{
+    return boost::system::error_code(
+        static_cast<int>(e),
+        filesystem_category());
+}
+
+boost::system::error_condition make_error_condition(filesystem_error::value e)
+{
+    return boost::system::error_condition(
+        static_cast<int>(e),
+        filesystem_category());
+}
+
+} // namespace system
+} // namespace rssd
+
+///
+/// @note Step 7: register for implicit conversion to error_code
+/// 
 
 namespace boost {
-namespace system {template <>struct is_error_code_enum<rssd::system::filesystem_error::value> : public boost::true_type {}; // struct is_error_code_enum}
-}#endif // RSSD_FILESYSTEM_ERROR_H
+namespace system {
+template <>
+struct is_error_code_enum<rssd::system::filesystem_error::value> : public boost::true_type 
+{}; // struct is_error_code_enum
+}
+}
+
+#endif // RSSD_FILESYSTEM_ERROR_H

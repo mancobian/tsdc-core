@@ -1,5 +1,5 @@
 ///
-/// @class Factory::Manager
+/// @class FactoryManager
 ///
 
 template <typename PRODUCT>
@@ -86,8 +86,7 @@ bool FactoryManager<PRODUCT>::destroy(PRODUCT *product)
 ///
 
 template <typename PRODUCT>
-Factory<PRODUCT>::Factory() :
-	_type(FactoryManager<PRODUCT>::getPointer()->generateFactoryId())
+Factory<PRODUCT>::Factory() // : _type(FactoryManager<PRODUCT>::getPointer()->generateFactoryId())
 {
 }
 

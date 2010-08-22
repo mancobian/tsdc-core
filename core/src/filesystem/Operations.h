@@ -38,7 +38,7 @@
 ///
 
 #include <boost/assign.hpp>
-#include "system/Type.h"
+#include "../System.h"
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 

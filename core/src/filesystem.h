@@ -1,5 +1,5 @@
 ///
-/// @file filesystem
+/// @file Filesystem.h
 /// @author Mancobian Poemandres
 /// @license BSD License
 ///
@@ -28,10 +28,12 @@
 /// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 /// OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 /// USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-///#ifndef RSSD_CORE_FILESYSTEM
+///
+
+#ifndef RSSD_CORE_FILESYSTEM
 #define RSSD_CORE_FILESYSTEM
 
 #include "filesystem/Operations.h"
 #include "filesystem/UriScheme.h"
 
-#endif // RSSD_CORE_FILESYSTEM
+#endif // RSSD_CORE_FILESYSTEM
