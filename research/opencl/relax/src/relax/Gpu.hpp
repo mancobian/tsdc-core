@@ -12,6 +12,26 @@ namespace gpu {
 ///
 
 int gpu_main(const size_t num_markers);
+cl_uint createMarkerDistances(
+  const std::string &kernel_name,
+  marker_v &markers,
+  Timer *timer);
+#if 0
+cl_uint createEntryPointBuffers(
+  const std::string &kernel_name,
+  const marker_v &labels,
+  const marker_v &objects,
+  gpgpu::ClBuffer_l &local_buffers,
+  gpgpu::ClBuffer_l &global_buffers,
+  uint32_t &param_index);
+cl_uint createMarkerPairCompatibilityBuffers(
+  const std::string &kernel_name,
+  const marker_v &lhs_markers,
+  const marker_v &rhs_markers,
+  gpgpu::ClBuffer_l &local_buffers,
+  gpgpu::ClBuffer_l &global_buffers,
+  uint32_t &param_index);
+#endif
 
 } // namespace gpu
 } // namespace relax

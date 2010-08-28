@@ -13,6 +13,13 @@ const float rssd::relax::compatibility_t::RIGID_VIOL_INCOMPAT = 8.5f;
 const float rssd::relax::compatibility_t::RATIO_CUTOFF_GLOBAL = 4.75f;
 
 ///
+/// @struct point_t
+///
+
+const point_t point_t::ZERO(0.0f, 0.0f, 0.0f, 0.0f);
+const point_t point_t::ONE(1.0f, 1.0f, 1.0f, 1.0f);
+
+///
 /// @struct rng
 ///
 

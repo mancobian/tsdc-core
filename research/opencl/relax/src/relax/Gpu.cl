@@ -1,27 +1,41 @@
-__kernel void test(
-  __global const float4 *labels,
-  __global float *distances)
+///
+/// @function calculateMarkerDistances1d
+/// @param num_markers (__global): Number of input markers.
+/// @param pos (__global): Array of 3D positions for input markers.
+/// @param differences (__global): Scratch space for marker position difference calculation results.
+/// @param distances (__global): Scratch space for marker distance calculation results.
+/// @param pos_cache (__local): Local copy of pos array.
+/// @note Establish a work group for each marker, resulting in m work groups.
+///       In each work-item kernel, loop through each input marker position and
+///       calculate the distance and difference between a marker and its comparison marker.
+/// @note Assume get_global_id(#) goes from 0..num_markers.
+/// @note Assume get_local_id(#) goes from 0..num_labels.
+///
+
+__kernel void calculateMarkerDistances1d(
+  __global float4 *pos,
+  __global float4 *differences,
+  __global float *distances,
+  __local float4 *pos_cache)
 {
-  int GLOBAL_INDEX = get_global_id(0);
-  int GLOBAL_SIZE = get_global_size(0);
-  int WORK_GROUP_INDEX = get_local_id(0);
-  int WORK_GROUP_SIZE = get_local_size(0);
-  int WORK_GROUP_ID = get_group_id(0);
-  int NUM_WORK_GROUPS = get_num_groups(0);
-  int STRIDE = 4;
+  // Cache input marker positions
+  const uint global_index = get_global_id(0);
+  const uint num_markers = get_global_size(0);
+  pos_cache[global_index] = pos[global_index];
+  const float4 current_marker = pos_cache[global_index];
 
-  // Get the current label
-  float4 current_label = labels[GLOBAL_INDEX];
+  // Sync
+  barrier (CLK_LOCAL_MEM_FENCE);
 
-  // For each label...
-  // for (int i = 0; i < STRIDE; ++i)
+  // Calculate marker distances/differences
+  uint result_index = global_index * num_markers;
+  for (uint i = 0; i < num_markers; ++i)
   {
-    // float4 other_label = labels[i];
-    //distances[GLOBAL_INDEX * STRIDE + i] = current_label[i];
-      // fast_distance(current_label,other_label);
-    distances[GLOBAL_INDEX * STRIDE + 0] = current_label.x;
-    distances[GLOBAL_INDEX * STRIDE + 1] = current_label.y;
-    distances[GLOBAL_INDEX * STRIDE + 2] = current_label.z;
-    distances[GLOBAL_INDEX * STRIDE + 3] = current_label.w;
+    distances[result_index] = fast_distance(current_marker, pos_cache[i]);
+    differences[result_index] = current_marker - pos_cache[i];
+    ++result_index;
   }
+
+  // Sync
+  barrier (CLK_LOCAL_MEM_FENCE);
 }

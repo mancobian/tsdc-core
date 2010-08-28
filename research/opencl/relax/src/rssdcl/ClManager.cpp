@@ -148,7 +148,9 @@ cl_int ClManager::compile(const std::string &filename)
     /// @todo Explore configuring build options.
     try
     {
-        this->_program.build(this->_devices);
+        this->_program.build(
+            this->_devices,
+            "-cl-mad-enable -cl-fast-relaxed-math");
     }
     catch(const cl::Error &error)
     {

@@ -53,6 +53,10 @@ public:
 struct point_t
 {
 public:
+  static const point_t ZERO;
+  static const point_t ONE;
+
+public:
   point_t(const float *values) :
     x(values[0]),
     y(values[1]),
@@ -116,7 +120,7 @@ public:
     return 0.0f;
   }
 
-  friend std::ostream& operator <<(std::ostream &out, point_t &value)
+  friend std::ostream& operator <<(std::ostream &out, const point_t &value)
   {
     out << "{" << value.x << ", "
       << value.y << ", "
@@ -170,6 +174,8 @@ public:
 
   double distance(const point_t &rhs) const
   {
+    if (*this == rhs)
+      return 0.0f;
     return (*this - rhs).length();
   }
 
@@ -229,7 +235,7 @@ public:
     return !(*this == rhs);
   }
 
-  friend std::ostream& operator <<(std::ostream &out, marker_t &value)
+  friend std::ostream& operator <<(std::ostream &out, const marker_t &value)
   {
     out << "marker_t {" << '\n'
       << "\tIndex: " << value.index << '\n'
@@ -275,7 +281,7 @@ public:
       default: { stride = 1; break; }
     }
 
-    rssd::gpgpu::ClBuffer::Byte_v &results = results_buffer->getData();
+    byte_v &results = results_buffer->getData();
     results.clear();
     results.resize(markers.size() * stride);
     std::cout << "Results resized to: " << results.size() << " bytes (stride=" << stride << " bytes)" << std::endl;
@@ -363,6 +369,7 @@ public:
   }
 
   /// @note Equivalency is commutative for marker pairs.
+  /// @note Disregard the above for now...
   bool operator ==(const marker_pair_t &rhs) const
   {
     return (this->first_marker == rhs.first_marker)

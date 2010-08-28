@@ -16,7 +16,7 @@
    <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Desktop</value>
    <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">CMakeProjectManager.DefaultCMakeTarget</value>
    <value key="ProjectExplorer.Target.ActiveBuildConfiguration" type="int">0</value>
-   <value key="ProjectExplorer.Target.ActiveRunConfiguration" type="int">1</value>
+   <value key="ProjectExplorer.Target.ActiveRunConfiguration" type="int">0</value>
    <valuemap key="ProjectExplorer.Target.BuildConfiguration.0" type="QVariantMap">
     <value key="CMakeProjectManager.CMakeBuildConfiguration.BuildDirectory" type="QString">/Users/arris/Code/rssd/research/opencl/relax/scripts/cmake/debug</value>
     <value key="CMakeProjectManager.CMakeBuildConfiguration.MsvcVersion" type="QString"></value>
@@ -45,26 +45,10 @@
    </valuemap>
    <value key="ProjectExplorer.Target.BuildConfigurationCount" type="int">1</value>
    <valuemap key="ProjectExplorer.Target.RunConfiguration.0" type="QVariantMap">
-    <valuelist key="ProjectExplorer.CustomExecutableRunConfiguration.Arguments" type="QVariantList">
-     <value type="QString">--cpu</value>
-     <value type="QString">--num_markers</value>
-     <value type="QString">60</value>
-    </valuelist>
-    <value key="ProjectExplorer.CustomExecutableRunConfiguration.BaseEnvironmentBase" type="int">2</value>
-    <value key="ProjectExplorer.CustomExecutableRunConfiguration.Executable" type="QString"></value>
-    <value key="ProjectExplorer.CustomExecutableRunConfiguration.UseTerminal" type="bool">false</value>
-    <valuelist key="ProjectExplorer.CustomExecutableRunConfiguration.UserEnvironmentChanges" type="QVariantList"/>
-    <value key="ProjectExplorer.CustomExecutableRunConfiguration.UserName" type="QString"></value>
-    <value key="ProjectExplorer.CustomExecutableRunConfiguration.UserSetName" type="bool">false</value>
-    <value key="ProjectExplorer.CustomExecutableRunConfiguration.WorkingDirectory" type="QString">$BUILDDIR</value>
-    <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Custom Executable</value>
-    <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">ProjectExplorer.CustomExecutableRunConfiguration</value>
-   </valuemap>
-   <valuemap key="ProjectExplorer.Target.RunConfiguration.1" type="QVariantMap">
     <value key="CMakeProjectManager.BaseEnvironmentBase" type="int">2</value>
     <value key="CMakeProjectManager.CMakeRunConfiguation.Title" type="QString">relax</value>
-    <value key="CMakeProjectManager.CMakeRunConfiguration.Arguments" type="QString">--gpu --markers 32</value>
-    <value key="CMakeProjectManager.CMakeRunConfiguration.Target" type="QString">/Users/arris/Code/rssd/research/opencl/relax/bin/relax</value>
+    <value key="CMakeProjectManager.CMakeRunConfiguration.Arguments" type="QString">-g --gpu --markers 32</value>
+    <value key="CMakeProjectManager.CMakeRunConfiguration.Target" type="QString">/Users/arris/Code/rssd/research/opencl/relax/bin/relax_d</value>
     <value key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal" type="bool">false</value>
     <valuelist key="CMakeProjectManager.CMakeRunConfiguration.UserEnvironmentChanges" type="QVariantList"/>
     <value key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory" type="QString"></value>
@@ -72,7 +56,7 @@
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">relax</value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">CMakeProjectManager.CMakeRunConfiguration.</value>
    </valuemap>
-   <value key="ProjectExplorer.Target.RunConfigurationCount" type="int">2</value>
+   <value key="ProjectExplorer.Target.RunConfigurationCount" type="int">1</value>
   </valuemap>
  </data>
  <data>

@@ -55,15 +55,20 @@ public:
   }
 
 public:
+  template <typename T>
   uint32_t createBuffer(
-    const uint32_t num_bytes,
-    const uint32_t flags)
+    const uint32_t index,
+    const uint32_t type,
+    const uint32_t num_elements,
+    const uint32_t flags = 0)
   {
     // Create and store new ClBuffer
     ClBuffer buffer(
       this->_context,
       this->_command_queue,
-      num_bytes,
+      index,
+      type,
+      num_elements * sizeof(T),
       flags);
     this->_buffers.insert(std::make_pair(buffer.getId(), buffer));
     return buffer.getId();
@@ -96,27 +101,12 @@ public:
     return result;
   }
 
-  cl_uint sendInput()
-  {
-    uint32_t GLOBAL_SIZE = 0;
-    uint32_t WORK_GROUP_SIZE = 64;
-    return this->sendInput(WORK_GROUP_SIZE, GLOBAL_SIZE);
-  }
-
   cl_uint sendInput(
-    uint32_t &work_group_size,
-    uint32_t &global_size)
+    const cl::NDRange &work_group_size,
+    const cl::NDRange &global_size)
   {
     // Local vars
     cl_uint result = CL_SUCCESS;
-
-#if 0
-    // Determine the global size of the problem, if necessary
-    if (!global_size) {
-      for (uint32_t i = 0; i < this->_buffers.size(); ++i) {
-        if (this->_buffers[i].getFlags() & CL_MEM_READ_ONLY) {
-          global_size = std::max<uint32_t>(global_size, this->_buffers[i].getRaw().size()); }}}
-#endif
 
     // Enqueue read buffer(s)
     ClBuffer_m::iterator
@@ -125,15 +115,16 @@ public:
     for (; iter != end; ++iter)
     {
       ClBuffer &buffer = iter->second;
-      if (buffer.getFlags() & CL_MEM_READ_ONLY)
+      if ((buffer.getFlags() & CL_MEM_READ_ONLY)
+        || (buffer.getType() == ClBuffer::Type::LOCAL))
         result &= this->enqueueBuffer(buffer);
     }
 
     // Bind kernel
     this->_functor = this->_kernel.bind(
       this->_command_queue,
-      cl::NDRange(global_size),
-      cl::NDRange(work_group_size));
+      global_size,
+      work_group_size);
     return result;
   }
 
@@ -146,12 +137,14 @@ protected:
     // Local vars
     cl_uint result = CL_SUCCESS;
 
+#if 0
     // Get buffer byte length
     const uint32_t BUFFER_SIZE = sizeof(byte) * buffer.size();
     std::cout << "BUFFER SIZE: " << BUFFER_SIZE << " bytes" << std::endl;
     std::cout << "BUFFER COUNT: " << buffer.size() << " elements" << std::endl;
     std::cout << "BUFFER: ";
     buffer.print<float>();
+#endif
 
     // Enqueue buffer in OpenCL command queue
     /// @note The *READ_ONLY/*WriteBuffer combo
@@ -160,10 +153,8 @@ protected:
     {
       this->_command_queue.enqueueWriteBuffer(
           buffer.getCl(),
-          //blocking ? CL_TRUE : CL_FALSE,
-          //offset,
-          CL_TRUE,
-          0,
+          blocking ? CL_TRUE : CL_FALSE,
+          offset,
           buffer.size(),
           &buffer[0]);
     }
@@ -171,12 +162,16 @@ protected:
     {
       this->_command_queue.enqueueReadBuffer(
           buffer.getCl(),
-          //blocking ? CL_TRUE : CL_FALSE,
-          //offset,
-          CL_TRUE,
-          0,
+          blocking ? CL_TRUE : CL_FALSE,
+          offset,
           buffer.size(),
           &buffer[0]);
+    }
+    else if(buffer.getType() == ClBuffer::Type::LOCAL)
+    {
+      this->_kernel.setArg(
+        buffer.getIndex(),
+        cl::__local(buffer.size()));
     }
     return result;
   }

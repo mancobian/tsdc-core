@@ -12,81 +12,44 @@
 namespace rssd {
 namespace gpgpu {
 
-struct sizeof_variant_visitor : boost::static_visitor<uint32_t>
-{
-  uint32_t operator ()(std::string &value) const
-  {
-    std::cout << "std::string => sizeof(" << value << "): " << sizeof(cl_char) << std::endl;
-    return sizeof(cl_char) * value.size();
-  }
-
-  uint32_t operator ()(float32_t value) const
-  {
-    std::cout << "float32_t => sizeof(" << value << "): " << sizeof(cl_float) << std::endl;
-    return sizeof(value);
-  }
-
-  uint32_t operator ()(float64_t value) const
-  {
-    std::cout << "float64_t => sizeof(" << value << "): " << sizeof(cl_float) << std::endl;
-    return sizeof(value);
-  }
-
-  uint32_t operator ()(int32_t value) const
-  {
-    std::cout << "int32_t => sizeof(" << value << "): " << sizeof(cl_int) << std::endl;
-    return sizeof(value);
-  }
-
-  uint32_t operator ()(int64_t value) const
-  {
-    std::cout << "int64_t => sizeof(" << value << "): " << sizeof(cl_long) << std::endl;
-    return sizeof(value);
-  }
-
-  uint32_t operator ()(uint32_t value) const
-  {
-    std::cout << "uint32_t => sizeof(" << value << "): " << sizeof(cl_uint) << std::endl;
-    return sizeof(value);
-  }
-
-  uint32_t operator ()(uint64_t value) const
-  {
-    std::cout << "uint64_t => sizeof(" << value << "): " << sizeof(cl_ulong) << std::endl;
-    return sizeof(value);
-  }
-
-  template <typename T>
-  uint32_t operator ()(T &value) const
-  {
-    std::cout << "T => sizeof(" << value << "): " << sizeof(value) << std::endl;
-    return sizeof(value);
-  }
-}; // struct variant_echo_visitor
-
 ///
 /// @class ClBuffer
 ///
 
 class ClBuffer
 {
-// public:
-//  typedef std::vector<variant_t> Byte_v;
 public:
-    typedef std::vector<byte> Byte_v;
+  struct Type
+  {
+    enum Value
+    {
+      MEMORY = 0,
+      SAMPLER,
+      LOCAL
+    }; // enum Value
+  }; // struct Type
 
 public:
   ClBuffer(
     cl::Context &context,
     cl::CommandQueue &command_queue,
+    const uint32_t index,
+    const uint32_t type,
     const uint32_t num_bytes,
     const uint32_t flags = 0) :
     _id(ClBuffer::UID++),
+    _index(index),
+    _type(type),
+    _size(num_bytes),
     _flags(flags),
+    _cl(cl::Buffer(
+      context,
+      flags,
+      num_bytes)),
     _context(context),
     _command_queue(command_queue)
   {
-    this->resize(num_bytes, flags);
+    this->resize();
   }
 
   ClBuffer(const ClBuffer &rhs)
@@ -101,11 +64,15 @@ public:
 
 public:
   inline uint32_t getId() const { return this->_id; }
+  inline uint32_t getIndex() const { return this->_index; }
+  inline void setIndex(const uint32_t value) { this->_index = value; }
   inline uint32_t getFlags() const { return this->_flags; }
-  inline Byte_v& getData() { return this->_data; }
-  inline const Byte_v& getData() const { return this->_data; }
+  inline byte_v& getData() { return this->_data; }
+  inline const byte_v& getData() const { return this->_data; }
   inline cl::Buffer& getCl() { return this->_cl; }
   inline const cl::Buffer& getCl() const { return this->_cl; }
+  inline uint32_t getType() const { return this->_type; }
+  inline void setType(const uint32_t value) { this->_type = value; }
 
 public:
   ClBuffer& operator =(const ClBuffer &rhs)
@@ -156,34 +123,27 @@ public:
 public:
   template <typename InputIterator>
   void insert(
-    Byte_v::iterator position,
+    byte_v::iterator position,
     InputIterator first,
     InputIterator last)
   {
     this->_data.insert(position, first, last);
   }
 
-  cl_uint resize(
-    const uint32_t num_bytes,
-    const uint32_t flags = 0)
+  cl_uint resize()
   {
     // Allocate raw buffer
-    this->_data.resize(num_bytes);
-
-    // Allocate CL buffer
-    this->_cl = cl::Buffer(
-      this->_context,
-      flags,
-      num_bytes);
-
-    // Store creation flags
-    this->_flags = flags;
+    if (this->_type != Type::LOCAL)
+      this->_data.resize(this->_size);
     return CL_SUCCESS;
   }
 
+  /// @returns Size of buffer in bytes.
   uint32_t size() const
   {
-    return this->_data.size();
+    if (this->_type != ClBuffer::Type::LOCAL)
+      assert (this->_size == this->_data.size());
+    return this->_size;
   }
 
   template <typename T>
@@ -193,7 +153,7 @@ public:
     uint32_t stride = sizeof(T) * sizeof(byte);
     T value;
 
-    out << "ClBuffer = {";
+    out << "ClBuffer (size=" << count << ") = {";
     for (uint32_t i = 0; i < count; ++i)
     {
       if (i > 0) out << ", ";
@@ -211,19 +171,15 @@ protected:
       return false;
 
     this->_id = rhs._id;
+    this->_index = rhs._index;
+    this->_type = rhs._type;
+    this->_size = rhs._size;
+    this->_flags = rhs._flags;
     this->_context = rhs._context;
     this->_command_queue = rhs._command_queue;
-
-    this->resize(rhs._data.size(), rhs._flags);
-
+    this->_cl = rhs._cl;
+    this->resize();
     this->_data.assign(rhs._data.begin(), rhs._data.end());
-
-    this->_command_queue.enqueueCopyBuffer(
-      rhs._cl,
-      this->_cl,
-      0,
-      0,
-      rhs.size());
     return true;
   }
 
@@ -233,8 +189,11 @@ protected:
 protected:
   uint32_t
     _id,
+    _index,
+    _type,
+    _size,
     _flags;
-  Byte_v _data;
+  byte_v _data;
   cl::Buffer _cl;
   cl::Context _context;
   cl::CommandQueue _command_queue;
@@ -246,6 +205,7 @@ protected:
 
 // TYPEDEF_CONTAINERS(ClBuffer);
 typedef std::map<uint32_t, ClBuffer> ClBuffer_m;
+typedef std::list<ClBuffer> ClBuffer_l;
 
 } // namespace gpgpu
 } // namespace rssd

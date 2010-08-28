@@ -42,14 +42,25 @@ int rssd::relax::cpu::cpu_main(const size_t num_markers)
   END_TRACE("GENERATE DATA", timer);
 
   // Calculate inter-label distances
+  marker_distance_m label_distances;
   BEGIN_TRACE("CALCULATE LABEL DISTANCES", timer);
   {
-    marker_distance_m label_distances;
     calculateInterLabelDistances(
       labels,
       label_distances);
   }
   END_TRACE("CALCULATE LABEL DISTANCES", timer);
+
+  cout << "Distances (size=" << label_distances.size() << ") = {";
+  marker_distance_m::iterator
+    iter = label_distances.begin(),
+    end = label_distances.end();
+  for (; iter != end; ++iter)
+  {
+    if (iter != label_distances.begin()) cout << ", ";
+    cout << iter->second;
+  }
+  cout << "}\n" << endl;
 
 #if 0
   // Calculate inter-object distances
@@ -131,28 +142,27 @@ void rssd::relax::cpu::calculateInterLabelDistances(
   const marker_t *this_label = NULL;
   const marker_t *other_label = NULL;
 
-	for (size_t l1 = 0; l1 < labels.size()-1; ++l1) 
+  try
   {
-		for (size_t l2 = 0; l2 < labels.size()-1; ++l2) 
+    for (size_t l1 = 0; l1 < labels.size(); ++l1)
     {
-      // Skip self-pairings
-      this_label = &labels[l1];
-      other_label = &labels[l2];
-      if (*this_label == *other_label)
-        continue;
+      for (size_t l2 = 0; l2 < labels.size(); ++l2)
+      {
+        this_label = &labels[l1];
+        other_label = &labels[l2];
 
-      // Calculate distance b/w labels
-      pair.set(*this_label, *other_label); 
-      if (distances.find(pair) == distances.end())
+        // Calculate distance b/w labels
+        pair.set(*this_label, *other_label);
+        // if (distances.find(pair) == distances.end())
         distances[pair] = this_label->distance(*other_label);
-#if 0
-			distances[pair] = std::sqrt(	
-        (p_posXYZ[l1][0] - p_posXYZ[l2][0])*(p_posXYZ[l1][0] - p_posXYZ[l2][0]) +
-        (p_posXYZ[l1][1] - p_posXYZ[l2][1])*(p_posXYZ[l1][1] - p_posXYZ[l2][1]) +
-        (p_posXYZ[l1][2] - p_posXYZ[l2][2])*(p_posXYZ[l1][2] - p_posXYZ[l2][2]));
-#endif
+      } // end for(...)
     } // end for(...)
-  } // end for(...)
+  }
+  catch (const std::exception &error)
+  {
+    std::cout << "Standard Error" << std::endl;
+    std::cout << "What: " << error.what() << std::endl;
+  }
 } // end rssd::calculateInterLabelDistances(...)
 
 size_t rssd::relax::cpu::getUniqueCompatabilityPairs(

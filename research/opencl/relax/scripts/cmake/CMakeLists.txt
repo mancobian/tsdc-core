@@ -33,9 +33,10 @@ add_definitions(-D__CL_ENABLE_EXCEPTIONS)
 # VARIABLES
 ###
 
-# if(NOT CMAKE_BUILD_TYPE)
-#     set(CMAKE_BUILD_TYPE "Debug")
-# endif()
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug")
+  add_definitions(-DDEBUG)
+endif()
 
 set(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../..")
 set(PROJECT_DIR "${ROOT_DIR}/${PROJECT_BASENAME}")
